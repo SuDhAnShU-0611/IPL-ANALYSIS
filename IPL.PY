@@ -1,4 +1,5 @@
 from os import rename
+from typing import Container
 from numpy.lib.shape_base import column_stack, row_stack
 import streamlit as st
 import pandas as pd
@@ -37,45 +38,59 @@ if nav == 'ABOUT US':
    with st.container(): 
     st.header('ABOUT PAGE')
     st.subheader('Welcome to the About-Us page👥')
-    st.write('The effort put by each and every team member of our group through their contribution for this fun and informative anaysis can be viewed in this page along with their respective roles they have in this group.')
+    st.write('The effort put by each and every team member of our group through their contribution for this fun and informative analysis that can be viewed in this page along with their respective roles they have in this group.')
     #---X---#
-    st.subheader('👉🏻RITIKA AGRAWAL')
-    image = Image.open('ritika.jpg')
-    st.image(image, caption='Ritika Agrawal', width=350, use_column_width= True)
+    #col1, col2, col3 = st.columns(3)
+
+    #with col1:
+   st.subheader('👉🏻RITIKA AGRAWAL')
+   image = Image.open('ritika.jpg')
+   st.image(image, caption='Ritika Agrawal', width=350, use_column_width= False)
      #---X---#
-    st.subheader('👉🏻SAHAJ JAIN')
-    image = Image.open('sahaj.jpg')
-    st.image(image, caption='Sahaj jain', width=350, use_column_width= True)
+    #with col2:
+   st.subheader('👉🏻SAHAJ JAIN')
+   image = Image.open('sahaj.jpg')
+   st.image(image, caption='Sahaj Jain', width=350, use_column_width= False)
+     #---X---#
+   #with col3:
+   st.subheader('👉🏻SUDHANSHU DUBEY')
+   image = Image.open('Sudhanshu.jpg')
+   st.image(image, caption='Sudhanshu Dubey', width=350, use_column_width= False)
     
 
 
 #---*DATA PAGE*---#
 if nav== 'DATA':
- with st.container(): 
-  st.header('DATA PAGE')
-  st.text('Welcome to the DATA page')
-
-
-#By using Pandas and Streamlit, you can read and upload your CSV file into your localhost.
 #st.header("Match Data")
-  M_data = pd.read_csv("C:/Users/sudhi/Desktop/streamlit/IPLMatch.csv") #path folder of the data file
+ M_data = pd.read_csv("C:/Users/sudhi/Desktop/streamlit/IPLMatch.csv") #path folder of the data file
 #st.header("Ball Data")
-  B_data = pd.read_csv("C:/Users/sudhi/Desktop/streamlit/IPLBall.csv") #path folder of the data file
+ B_data = pd.read_csv("C:/Users/sudhi/Desktop/streamlit/IPLBall.csv") #path folder of the data file
 
-  filter= st.sidebar.selectbox(
+ filter= st.sidebar.selectbox(
    "Filter",
    ("Choose","Season","Match","Batsmen","Bowler","Player Stats")
     
-   )
+   )       
+ if filter== 'Choose':
+  with st.container(): 
+   st.header('DATA PAGE')
+   st.text('Welcome to the DATA page')
+   st.write('Here we analyze the different aspects of our IPL Data that we can use to interpret various aspects of the sports')
+   image = Image.open('ipl_trophy.jpg')
+   st.image(image, caption='THE TROPHY', width=350, use_column_width= True)
+   st.caption('This is the trophy for which each team prepares every year rigorously to achieve the glory and fame that the team gains after winning this beautiful trophy..')
+
+#By using Pandas and Streamlit, you can read and upload your CSV file into your localhost.
+
 
 
 
 #--SEASON DATA--
 if filter== 'Season':
-
-
-    st.header("CITY/VENUE DATA")
-    st.write('The data below shows all the matches that were played between the two teams in various cities and stadius throughout the IPL')
+ with st.container():
+    st.header('SEASON DATA')
+    st.subheader("CITY/VENUE DATA")
+    st.write('➡️The data below shows all the matches that were played between the two teams in various cities and stadiums throughout the IPL History')
     
     city1=(pd.DataFrame(M_data, columns=['city', 'venue', 'date'])) #displays the table of MATCH data
     st.write(city1)
@@ -95,25 +110,32 @@ if filter== 'Season':
     #st.columns=["Seasons","matches"]
     #st.bar_chart(match_per_season)
     #st.caption('Number of Matches in each IPL SEASONS') 
-    st.caption("NUMBER OF TIMES TOSS WON ")
+    st.subheader('TOSS WINNERS')
+    st.write("➡️The data below shows number of times toss won by each team throughout the IPL History( It also includes the temporary IPL Teams):- ")
     toss=M_data['toss_winner'].value_counts() 
     st.dataframe(toss)
+    st.write("➡️The graph below shows number of times toss won by each team throughout the IPL History( It also includes the temporary IPL Teams):- ")
     st.bar_chart(toss)
+    
 
      
     season_data=M_data[['id','Season']].merge(B_data, left_on = 'id', right_on = 'id', how = 'left').drop('id', axis = 1)
     season_data.head()
     st.subheader('TOTAL RUNS PER SEASON')
+    st.write("➡️The data below shows the total amount of runs scored in every season of IPl throughout the IPL History:- ")
     season=season_data.groupby(['Season'])['total_runs'].sum().reset_index()
-    p=season.set_index('Season')
-    p
-    st.bar_chart(p)
-    st.caption('TOTAL RUNS PER SEASON')
+    T_Runs=season.set_index('Season')
+    T_Runs
+    st.write("➡️The graph below shows the total amount of runs scored in every season of IPl throughout the IPL History:- ")
+    st.bar_chart(T_Runs)
+
 
     matches_per_season1=pd.concat([match_per_season,season.iloc[:,1]],axis=1)
     matches_per_season1.set_index('Season',inplace=True)
     st.subheader('MATCHES PER SEASON') 
+    st.write("➡️The graph below shows number of matches played each year throughout the IPL History( It also includes the matches played by the temporary IPL Teams):- ")
     matches_per_season1
+    st.write("➡️The graph below shows number of matches played each year throughout the IPL History( It also includes the matches played by the temporary IPL Teams):- ")
     st.bar_chart(matches_per_season1['matches'])
    
 
@@ -131,12 +153,16 @@ if filter== 'Match':
     
     st.subheader("TEAM DATA")
     M_data = pd.read_csv("C:/Users/sudhi/Desktop/streamlit/IPLMatch.csv") #path folder of the data file
-    st.write(pd.DataFrame(M_data, columns=['team1', 'team2', 'toss_winner', 'toss_decision'])) #displays the table of MATCH data
+    st.write("➡️The data below shows the Toss data , Toss winner and Match winner of each match through out the IPL history, It also shows their toss winning team's decision after winning the toss:-")
+    st.write(pd.DataFrame(M_data, columns=['team1', 'team2', 'toss_winner', 'toss_decision','winner'])) #displays the table of MATCH data
     df=pd.DataFrame(M_data)
     toss_Winner= df.groupby('toss_winner')
     toss_Winner.sum()
     toss = M_data['toss_winner'] == M_data['winner']
-    st.line_chart(toss)
+    st.write("➡️The data below represents the whether or not the teams who won the toss DID actually win the match or not for their corresponding matches in the IPL:-")
+    st.dataframe(toss)
+    st.write("➡️The graph below represents the whether or not the teams who won the toss DID actually win the match or not for their corresponding matches in the IPL:-")
+    st._arrow_bar_chart(toss)
 
     
     #st.write(toss_Winner(TEAM_SELECTED))
@@ -149,7 +175,8 @@ if filter== 'Match':
 
     st.header("RESULT DATA")
     M_data = pd.read_csv("C:/Users/sudhi/Desktop/streamlit/IPLMatch.csv") #path folder of the data file
-    st.write(pd.DataFrame(M_data, columns=['result', 'result_margin', 'player_of_match', 'method'])) #displays the table of MATCH data
+    st.write('➡️The data below shows all the final result which includes the winning teams and result margin by which these teams won:-')
+    st.write(pd.DataFrame(M_data, columns=['result', 'result_margin','winner','player_of_match','method'])) #displays the table of MATCH data
 
     #st.write(pd.DataFrame(B_data)) #displays the table of BALL data
 
@@ -160,7 +187,7 @@ if filter== 'Batsmen':
     st.header("BATSMEN DATA")
     st.write('The data below shows the top batsmen in terms of their runscoring ability throughout the multiple IPL Seasons')
     with st.expander('NUMBER OF BATSMEN:') :
-     value = st.slider('Select the number',  0,100,5,5)
+     value = st.slider('Select the number (increases by 5 batsmen)',  0,100,5,5)
      if value== 0:
         st.write('max batsmen selected is:', value)
      else:
